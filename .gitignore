@@ -1,0 +1,54 @@
+# Ignore environment files
+.env
+.env.*
+*.secret
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+*.sqlite3
+*.db
+*.bak
+*.tmp
+*.swp
+*.swo
+
+# Jupyter and notebook files
+.ipynb_checkpoints/
+*.ipynb
+
+# VS Code and editor files
+.vscode/
+*.code-workspace
+*.idea/
+*.DS_Store
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# User data and config
+user/config/
+user/data/
+
+# Images and cache
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+*.svg
+*.ico
+clipboard_images/
+
+# Markdown and docs cache
+*.md~

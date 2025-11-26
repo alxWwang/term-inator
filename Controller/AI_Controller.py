@@ -8,8 +8,11 @@ from Data import load
 from config import Config
 import threading
 
+# Load environment variables from .env
+from dotenv import load_dotenv
+load_dotenv()
 
-os.environ["GENAI_API_KEY"] = "AIzaSyAdQMoF50YKr5PEAn3Ex0ROegzWloslRaI"
+GENAI_API_KEY = os.environ.get("GENAI_API_KEY")
 
 class AIController:
     # Prompt templates
@@ -32,7 +35,7 @@ class AIController:
                 flat_msgs.append(pair)
         return flat_msgs
     def __init__(self, model_name: str = "gemini-2.5-pro"):
-        self.client = genai.Client(api_key="AIzaSyAdQMoF50YKr5PEAn3Ex0ROegzWloslRaI")
+        self.client = genai.Client(api_key=GENAI_API_KEY)
         self.model_name = model_name
         self.chat = {}
         
