@@ -137,6 +137,16 @@ All controllers and AI logic reference these templates for consistent messaging 
 
 ---
 
+## Features
+- AI-powered chat with conversation history
+- Markdown/code rendering
+- Responsive Textual UI
+- **Pagination:** Navigate conversation pages using Next/Previous buttons (already implemented)
+- Auto-complete for incomplete conversations
+- Modular controller/data architecture
+
+---
+
 ## How to Run
 1. Install Python 3.10+ and dependencies (`pip install -r requirements.txt`).
 2. Run `main.py` in your terminal.
@@ -167,6 +177,23 @@ All controllers and AI logic reference these templates for consistent messaging 
    - Start new conversations, send messages, and browse history using the terminal interface.
    - Use the navigation buttons to switch conversations and pages.
    - The app will auto-complete conversations and provide AI responses.
+
+---
+
+## API Key & Debug Mode
+
+- The application requires a `GENAI_API_KEY` for full AI functionality.
+- If no API key is provided during installation or in the `.env` file, the app will run in debug mode.
+- When running in debug mode, you will be prompted at startup to enter your API key. If you provide a key, it will be saved to `.env` and you can restart the app for full functionality.
+- To manually set your API key, add the following to your `.env` file:
+  ```
+  GENAI_API_KEY=your_api_key_here
+  DEBUG_MODE=False
+  ```
+- To force debug mode, set:
+  ```
+  DEBUG_MODE=True
+  ```
 
 ---
 

@@ -2,6 +2,24 @@
 import os
 import sys
 import subprocess
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+def ensure_api_key():
+    api_key = os.environ.get("GENAI_API_KEY")
+    debug_mode = os.environ.get("DEBUG_MODE", "False") == "True"
+    if not api_key or debug_mode:
+        print("No GENAI API key found. Running in debug mode.")
+        new_key = input("Enter your GENAI API key to enable full functionality (leave blank to stay in debug mode): ").strip()
+        if new_key:
+            with open(".env", "a") as f:
+                f.write(f"GENAI_API_KEY={new_key}\nDEBUG_MODE=False\n")
+            print("API key saved. Please restart the application to enable full functionality.")
+            exit(0)
+    return debug_mode
+
+debug_mode = ensure_api_key()
 
 
 # Auto-install dependencies if requirements.txt exists
@@ -218,8 +236,9 @@ class Terminator(App):
         
 
 
-if __name__ == "__main__":
-    # Check if 'debug' argument is passed
-    debug_mode = 'debug' in [arg.lower() for arg in sys.argv[1:]]
+def main():
     app = Terminator(debug=debug_mode)
     app.run()
+
+if __name__ == "__main__":
+    main()
