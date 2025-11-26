@@ -1,0 +1,307 @@
+[
+  {
+    "id": "conv_1764123285",
+    "timestamp": "2025-11-25T20:14:45.871602",
+    "title": "Hello Again Sequence",
+    "messages": [
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "Hello! How can I assist you today?"
+          }
+        ],
+        "timestamp": "2025-11-25T20:14:45.871602"
+      },
+      {
+        "user": {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Hello"
+            }
+          ],
+          "timestamp": "2025-11-25T20:14:47.952823"
+        },
+        "model": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "[DEBUG] AI response to: Hello"
+            }
+          ],
+          "timestamp": "2025-11-25T20:39:15.352250"
+        },
+        "ai_pending": false
+      },
+      {
+        "user": {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Hello again"
+            }
+          ],
+          "timestamp": "2025-11-25T20:15:00.676866"
+        },
+        "model": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "[DEBUG] AI response to: Hello\nHello again"
+            }
+          ],
+          "timestamp": "2025-11-25T20:39:00.000466"
+        },
+        "ai_pending": false
+      },
+      {
+        "user": {
+          "role": "user",
+          "parts": [
+            {
+              "text": "hello again 2"
+            }
+          ],
+          "timestamp": "2025-11-25T20:15:02.982658"
+        },
+        "model": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "[DEBUG] AI response to: Hello\nHello again\nhello again 2"
+            }
+          ],
+          "timestamp": "2025-11-25T20:38:59.113059"
+        },
+        "ai_pending": false
+      },
+      {
+        "user": {
+          "role": "user",
+          "parts": [
+            {
+              "text": "hello again 3"
+            }
+          ],
+          "timestamp": "2025-11-25T20:15:04.968776"
+        },
+        "model": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "[DEBUG] AI response to: Hello\nHello again\nhello again 2\nhello again 3"
+            }
+          ],
+          "timestamp": "2025-11-25T20:38:47.135795"
+        },
+        "ai_pending": false
+      },
+      {
+        "user": {
+          "role": "user",
+          "parts": [
+            {
+              "text": "hello again 4"
+            }
+          ],
+          "timestamp": "2025-11-25T20:15:07.947922"
+        },
+        "model": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "[DEBUG] AI response to: Hello\nHello again\nhello again 2\nhello again 3\nhello again 4"
+            }
+          ],
+          "timestamp": "2025-11-25T20:38:35.407985"
+        },
+        "ai_pending": false
+      },
+      {
+        "user": {
+          "role": "user",
+          "parts": [
+            {
+              "text": "hello again 5"
+            }
+          ],
+          "timestamp": "2025-11-25T20:15:23.136108"
+        },
+        "model": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "[DEBUG] AI response to: Hello\nHello again\nhello again 2\nhello again 3\nhello again 4\nhello again 5"
+            }
+          ],
+          "timestamp": "2025-11-25T20:38:22.957270"
+        },
+        "ai_pending": false
+      },
+      {
+        "user": {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Hello"
+            }
+          ],
+          "timestamp": "2025-11-25T20:25:56.532193"
+        },
+        "model": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "[DEBUG] AI response to: Hello\nHello again\nhello again 2\nhello again 3\nhello again 4\nhello again 5\nHello"
+            }
+          ],
+          "timestamp": "2025-11-25T20:38:08.928391"
+        },
+        "ai_pending": false
+      }
+    ]
+  },
+  {
+    "id": "conv_1764125335",
+    "timestamp": "2025-11-25T20:48:55.498741",
+    "title": null,
+    "messages": [
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "Hello! How can I assist you today?"
+          }
+        ],
+        "timestamp": "2025-11-25T20:48:55.498741"
+      },
+      {
+        "user": {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Hello"
+            }
+          ],
+          "timestamp": "2025-11-25T20:48:58.486880"
+        },
+        "model": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "[DEBUG] AI response to: Hello"
+            }
+          ],
+          "timestamp": "2025-11-25T20:49:08.488291"
+        },
+        "ai_pending": false
+      },
+      {
+        "user": {
+          "role": "user",
+          "parts": [
+            {
+              "text": "hello again"
+            }
+          ],
+          "timestamp": "2025-11-25T20:48:59.850679"
+        },
+        "model": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "[DEBUG] AI response to: Hello\nhello again"
+            }
+          ],
+          "timestamp": "2025-11-25T20:49:09.852469"
+        },
+        "ai_pending": false
+      },
+      {
+        "user": {
+          "role": "user",
+          "parts": [
+            {
+              "text": "hello again"
+            }
+          ],
+          "timestamp": "2025-11-25T20:49:01.177608"
+        },
+        "model": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "[DEBUG] AI response to: Hello\nhello again\nhello again"
+            }
+          ],
+          "timestamp": "2025-11-25T20:49:11.179015"
+        },
+        "ai_pending": false
+      },
+      {
+        "user": {
+          "role": "user",
+          "parts": [
+            {
+              "text": "hello again 4"
+            }
+          ],
+          "timestamp": "2025-11-25T20:49:04.497986"
+        },
+        "model": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "[DEBUG] AI response to: Hello\nhello again\nhello again\nhello again 4"
+            }
+          ],
+          "timestamp": "2025-11-25T20:49:14.499421"
+        },
+        "ai_pending": false
+      },
+      {
+        "user": {
+          "role": "user",
+          "parts": [
+            {
+              "text": "wow wowo wow"
+            }
+          ],
+          "timestamp": "2025-11-25T20:49:07.121960"
+        },
+        "model": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "[DEBUG] AI response to: Hello\nhello again\nhello again\nhello again 4\nwow wowo wow"
+            }
+          ],
+          "timestamp": "2025-11-25T20:49:17.123398"
+        },
+        "ai_pending": false
+      },
+      {
+        "user": {
+          "role": "user",
+          "parts": [
+            {
+              "text": "wow if i type to fast it still got the context of what i'm asking"
+            }
+          ],
+          "timestamp": "2025-11-25T20:49:39.048247"
+        },
+        "model": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "[DEBUG] AI response to: wow if i type to fast it still got the context of what i'm asking"
+            }
+          ],
+          "timestamp": "2025-11-25T20:49:49.050418"
+        },
+        "ai_pending": false
+      }
+    ]
+  }
+]
