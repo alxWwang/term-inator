@@ -180,6 +180,16 @@ All controllers and AI logic reference these templates for consistent messaging 
 
 ---
 
+## System-wide Installation
+
+To install Terminator system-wide and run it from any terminal, use:
+```sh
+pip install .
+```
+After installation, you can type `terminator` in any terminal to launch the app.
+
+---
+
 ## API Key & Debug Mode
 
 - The application requires a `GENAI_API_KEY` for full AI functionality.
