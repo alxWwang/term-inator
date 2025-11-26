@@ -36,7 +36,6 @@ Thumbs.db
 .DS_Store
 
 # User data and config
-user/config/
 user/data/
 
 # Images and cache

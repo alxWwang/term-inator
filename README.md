@@ -186,7 +186,17 @@ To install Terminator system-wide and run it from any terminal, use:
 ```sh
 pip install .
 ```
-After installation, you can type `terminator` in any terminal to launch the app.
+After installation, you can type `terminator` in any terminal to launch the app. **The installer works and sets up all necessary files automatically!**
+
+---
+
+## Configuration Files
+
+Terminator uses the following configuration files, located in `~/.terminator/user/config/`:
+- **Bindings:** `~/.terminator/user/config/bindings.conf` - Key bindings for the application.
+- **CSS:** `~/.terminator/user/config/style.conf` - Styling for the Textual UI.
+
+These files are automatically copied from the package defaults on first run if they don't exist. You can edit them to customize the app's behavior and appearance.
 
 ---
 
@@ -206,6 +216,7 @@ After installation, you can type `terminator` in any terminal to launch the app.
   ```
 
 ---
+add your keys here: ~/.terminator.env
 
 ## Future Improvements
 - Add streaming AI responses.

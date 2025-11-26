@@ -1,0 +1,5 @@
+# MANIFEST.in
+include README.md
+recursive-include terminator *.conf
+recursive-include terminator *.json
+recursive-include terminator *.css
