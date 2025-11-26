@@ -142,6 +142,32 @@ All controllers and AI logic reference these templates for consistent messaging 
 2. Run `main.py` in your terminal.
 3. Use the UI to start conversations, send messages, and browse history.
 
+## How to Use
+
+1. **Clone the repository:**
+   ```sh
+   git clone https://github.com/alxWwang/term-inator.git
+   cd term-inator
+   ```
+2. **Install dependencies:**
+   ```sh
+   pip install -r requirements.txt
+   ```
+3. **Set up your API key:**
+   - Create a `.env` file in the project root.
+   - Add your Gemini API key:
+     ```
+     GENAI_API_KEY=your_api_key_here
+     ```
+4. **Run the application:**
+   ```sh
+   python main.py
+   ```
+5. **Interact with the UI:**
+   - Start new conversations, send messages, and browse history using the terminal interface.
+   - Use the navigation buttons to switch conversations and pages.
+   - The app will auto-complete conversations and provide AI responses.
+
 ---
 
 ## Future Improvements
