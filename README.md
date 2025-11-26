@@ -84,6 +84,28 @@ Terminator is a Textual-based terminal chat application supporting AI-powered co
 
 ---
 
+## Configuration & Prompts
+
+All configuration constants, UI identifiers, and prompt templates are centralized in `config.py` under the `Config` class. This includes:
+- File paths and UI element IDs
+- Button and container identifiers
+- Application metadata
+- **Prompt templates** for AI responses, error messages, and conversation titles
+
+To update or customize prompts, edit the relevant fields in `Config` (e.g., `TITLE_PROMPT_TEMPLATE`, `DEBUG_AI_RESPONSE_TEMPLATE`).
+
+Example:
+```python
+class Config:
+    TITLE_PROMPT_TEMPLATE = "Based on this conversation, provide a very short title (3-5 words max):\n\n{conversation_text}\n\nTitle:"
+    DEBUG_AI_RESPONSE_TEMPLATE = "[DEBUG] AI response to: {prompt}"
+    # ...other config...
+```
+
+All controllers and AI logic reference these templates for consistent messaging and easy maintenance.
+
+---
+
 ## Architecture & Flow
 
 - **Controllers:**
