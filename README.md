@@ -186,6 +186,11 @@ To install Terminator system-wide and run it from any terminal, use:
 ```sh
 pip install .
 ```
+To have a sym-link between the installed file and the repo, use:
+```sh
+pip install -e .
+```
+
 After installation, you can type `terminator` in any terminal to launch the app. **The installer works and sets up all necessary files automatically!**
 
 ---
