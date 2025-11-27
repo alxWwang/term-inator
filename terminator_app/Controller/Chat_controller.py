@@ -55,7 +55,7 @@ class ChatController:
         conv = self.data_manager.get_conversation_by_id(conv_id)
         if conv:
             self.current_conversation = conv
-            if conv_id not in self.AI_controller.chat:
+            if conv_id not in self.AI_controller.sessions:
                 self.AI_controller.open_session(conv_id)
             # Reset ai_pending for unfinished prompts on load
             self.chat_data_manager.reset_ai_pending_for_unfinished_prompts(conv)

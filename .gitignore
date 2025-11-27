@@ -1,3 +1,5 @@
+./local_model
+
 # Ignore environment files
 .env
 .env.*

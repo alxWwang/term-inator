@@ -66,7 +66,7 @@ class Terminator(App):
         self.data_manager = DataManager()
             
         # Initialize controllers with dependency injection
-        self.AI_controller = AI_Controller.AIController()
+        self.AI_controller = AI_Controller.AIController(None, {})
         self.chat_controller = Chat_controller.ChatController(
             self.data_manager,
             self.AI_controller,
