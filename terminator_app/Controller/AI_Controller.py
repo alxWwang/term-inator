@@ -2,14 +2,15 @@ import os
 
 from terminator_app.config import Config
 
-try:
-    from terminator_app.Models import GoogleModel as gm
-    from terminator_app.Interfaces.ModelInterface import ModelInterface
-    from terminator_app.Data import load
-    from terminator_app.config import Prompts
-except ImportError:
-    from Interfaces.ModelInterface import ModelInterface
-    from config import Prompts
+# try:
+from terminator_app.Models import GoogleModel as gm
+from terminator_app.Models import LMStudioModel as lm
+from terminator_app.Interfaces.ModelInterface import ModelInterface
+from terminator_app.Data import load
+from terminator_app.config import Prompts
+# except ImportError:
+#     from Interfaces.ModelInterface import ModelInterface
+#     from config import Prompts
 import threading
 
 # Load environment variables from .env
@@ -30,8 +31,8 @@ class AIController:
             model_class (type[ModelInterface]): The class of the model to instantiate.
             model_config (dict): Configuration parameters for the model.
         """
-        self.model_class = model_class or gm.GoogleModel
-        self.model_config = model_config or {"api_key": GENAI_API_KEY}
+        self.model_class = model_class or lm.LMStudioModel or gm.GoogleModel
+        self.model_config = model_config or {"model_name": "openai/gpt-oss-20b"} or {"api_key": GENAI_API_KEY}
         self.model = self.model_class(**self.model_config)
         self.sessions = {}
 
@@ -62,10 +63,7 @@ class AIController:
             return
 
         history = self.deserialize_history(conv_id) if not new else None
-        self.sessions[conv_id] = self.model.client.chats.create(
-            model=self.model.model_name,  # Access model_name from the instance
-            history=history
-        )
+        self.sessions[conv_id] = self.model.create_chat(history)
 
     # Databse -> what the model understands
     def deserialize_history(self, conv_id: str) -> list | None:
@@ -88,20 +86,18 @@ class AIController:
             if not session:
                 raise ValueError(f"Session {conv_id} does not exist.")
 
+            # Use the model's send_message method instead of the Chat object
             if streaming:
                 return session.send_message_stream(prompt)
-            return session.send_message(prompt).text
+            return session.send_message(prompt)
         except Exception as e:
             return self._handle_error(e)
 
     def get_static_response(self, prompt: str) -> str:
         """Get a single response without maintaining conversation history."""
         try:
-            response = self.model.client.models.generate_content(
-                model=self.model_class.model_name,
-                contents=prompt
-            )
-            return response.text
+            response = self.model.generate_content(prompt)
+            return response
         except Exception as e:
             return self._handle_error(e)
 
@@ -119,7 +115,7 @@ class AIController:
                 response_text = self.get_static_response(prompt)
                 return response_text.strip()
             except Exception as e:
-                return self._handle_error(e, default="Untitled Conversation")
+                return self._handle_title_error(e, default="Untitled Conversation")
 
         if callback:
             thread = threading.Thread(target=lambda: callback(conv.get('id'), _generate_title()), daemon=True)
@@ -138,3 +134,8 @@ class AIController:
         """Handle errors and return a formatted error message."""
         print(f"An error occurred: {error}")
         return Prompts.ERROR_UNEXPECTED_RESPONSE_TEMPLATE.format(error=error) or default
+    
+    def _handle_title_error(self, error: Exception, default: str = "") -> str:
+        """Handle errors and return a formatted error message."""
+        print(f"An error occurred: {error}")
+        return ""

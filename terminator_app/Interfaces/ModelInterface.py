@@ -16,6 +16,11 @@ class ModelInterface(ABC):
         """Generate content based on the provided input."""
         pass
 
+    @abstractmethod
     def deserialize_history(self, flat_msgs: list) -> list | None:
         """Deserialize a flat list of messages into the model's history format."""
+        pass
+
+    @abstractmethod
+    def create_chat(self, history_data):
         pass

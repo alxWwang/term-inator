@@ -99,7 +99,7 @@ class HistoryController:
     def _create_button(self, history_container: VerticalScroll, conv_id: str, timestamp: str, title: str) -> Button:
         """Create and mount a new button."""
         button = Button(
-            f"{timestamp}: {title}",
+            f"{title}",
             id=f"{Config.CONVERSATION_BUTTON_PREFIX}{conv_id}",
             classes=Config.CONVERSATION_BUTTON_CLASS
         )

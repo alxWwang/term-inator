@@ -94,8 +94,6 @@ class Prompts:
     DEBUG_AI_RESPONSE_TEMPLATE = "[DEBUG] AI response to: {prompt}"
     ERROR_API_RESPONSE_TEMPLATE = "Error: Could not get a response from the model. {error}"
     ERROR_UNEXPECTED_RESPONSE_TEMPLATE = "Error: An unexpected error occurred. {error}"
-
-    
     
 
 class UserConfig:

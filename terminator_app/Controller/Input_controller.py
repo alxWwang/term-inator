@@ -1,4 +1,3 @@
-
 from time import time
 from textual.widgets import Input
 import threading
@@ -74,14 +73,18 @@ class InputController():
         input_field.value = ""
         if 'messages' not in conversation:
             conversation['messages'] = []
+        if len(conversation['messages']) == 0 and conversation.get('id'):
+            pass
         user_msg: MessageDict = {
             'role': 'user',
             'parts': [{'text': user_input}],
             'timestamp': datetime.datetime.now().isoformat()
         }
-        if len(conversation['messages']) == 0 and conversation.get('id') and user_msg['role'] == 'user':
-            pass
-        pair: UserModelPairDict = {'user': user_msg, 'model': None, 'ai_pending': False}
+        pair: UserModelPairDict = {
+            'user': user_msg, 
+            'model': None, 
+            'ai_pending': True
+        }
         conversation['messages'].append(pair)
         idx = len(conversation['messages']) - 1
         print(f"User input received: {user_input} (index {idx})")

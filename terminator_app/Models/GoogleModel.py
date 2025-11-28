@@ -29,6 +29,21 @@ class GoogleModel(ModelInterface):
             return self.client.chats.create(model=self.model_name).send_message(prompt).text
         except APIError as e:
             raise RuntimeError(f"Google API error: {e}")
+        
+    def create_chat(self, history_data):
+        """
+        Create a chat session with optional history.
+
+        Args:
+            history_data: The chat history data to initialize the session.
+
+        Returns:
+            Chat session object.
+        """
+        try:
+            return self.client.chats.create(model=self.model_name, history=history_data)
+        except APIError as e:
+            raise RuntimeError(f"Google API error: {e}")
 
     def send_message_stream(self, prompt: str):
         """
