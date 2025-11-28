@@ -25,8 +25,8 @@ class InputController():
     
     def chat_input_controller(self, user_input: str, current_conversation: ConversationDict, input_field: Input, app_instance) -> None:
         """Handle user input submission and coordinate AI response."""
-        idx = self._add_user_message(user_input, current_conversation, input_field)
-        self.ai_handler.start_ai_response_thread((user_input, idx), current_conversation, app_instance)
+        idx, gen_id = self._add_user_message(user_input, current_conversation, input_field)
+        self.ai_handler.start_ai_response_thread((user_input, idx), current_conversation, app_instance, gen_id=gen_id)
 
     def auto_complete_conversation(self, conversation: ConversationDict) -> bool:
         """
@@ -73,8 +73,9 @@ class InputController():
         input_field.value = ""
         if 'messages' not in conversation:
             conversation['messages'] = []
-        if len(conversation['messages']) == 0 and conversation.get('id'):
-            pass
+        if 'id' not in conversation:
+            conversation['id'] = f"conv_{int(time())}"
+        gen_id = f"msg_{conversation.get('id')}"
         user_msg: MessageDict = {
             'role': 'user',
             'parts': [{'text': user_input}],
@@ -83,73 +84,125 @@ class InputController():
         pair: UserModelPairDict = {
             'user': user_msg, 
             'model': None, 
-            'ai_pending': True
+            'ai_pending': True,
+            'gen_id': gen_id
         }
         conversation['messages'].append(pair)
         idx = len(conversation['messages']) - 1
         print(f"User input received: {user_input} (index {idx})")
         self.chat_controller.write_conversation_to_history(conversation)
-        return idx
+        return idx, gen_id
 
 
-# AI response logic is now handled by AIResponseHandler subclass
 class AIResponseHandler:
     def __init__(self, parent) -> None:
         self.parent = parent
 
-    def start_ai_response_thread(self, prompt_idx_tuple, conversation: ConversationDict, app_instance) -> None:
+    def start_ai_response_thread(self, prompt_idx_tuple, conversation, app_instance, gen_id: str = None) -> None:
         thread = threading.Thread(
             target=self._get_ai_response_thread,
-            args=(prompt_idx_tuple, conversation, app_instance),
+            args=(prompt_idx_tuple, conversation, app_instance, gen_id),
             daemon=True
         )
         thread.start()
 
-    def _get_ai_response_thread(self, prompt_idx_tuple, current_conversation: ConversationDict, app_instance) -> None:
-        print("Starting AI response thread...")
+    def _get_ai_response_thread(self, prompt_idx_tuple, conversation: ConversationDict, app_instance, gen_id: str) -> None:
+        print(f"Starting AI streaming thread (Ticket: {gen_id})...")
         prompt, idx = prompt_idx_tuple
-        messages: List[Union[MessageDict, UserModelPairDict]] = current_conversation.get('messages', [])
+        
+        # 1. Build Context
+        messages = conversation.get('messages', [])
         context_parts = self._get_context_from_previous_messages(messages, idx)
-        if context_parts:
-            prompt = '\n'.join(context_parts) + '\n' + prompt
-        response = self._get_response(prompt, current_conversation.get('id'))
-        self._add_ai_message(response, current_conversation, idx)
+        full_prompt = ('\n'.join(context_parts) + '\n' + prompt) if context_parts else prompt
+
+        # 2. Init Visuals: Create an empty "Model" bubble immediately
+        if not self._init_streaming_message(conversation, idx, gen_id):
+            return # Stale ticket, abort
+        self._refresh_ui(app_instance)
+
+        # 3. Stream Loop
+        conv_id = conversation.get('id')
+        accumulated_text = ""
+        
+        try:
+            # Request Streaming Iterator
+            stream = self.parent.AI_controller.get_response(conv_id, full_prompt, streaming=True)
+            
+            for chunk in stream:
+                # Check Ticket inside the loop (allows user to cancel/regenerate mid-stream)
+                if not self._validate_ticket(conversation, idx, gen_id):
+                    print("Stream aborted: Stale ticket.")
+                    return
+
+                # Update RAM + UI
+                accumulated_text += chunk
+                self._update_streaming_text(conversation, idx, accumulated_text)
+                self._refresh_ui(app_instance)
+                
+        except Exception as e:
+            accumulated_text += f"\n[Error: {str(e)}]"
+            self._update_streaming_text(conversation, idx, accumulated_text)
+            self._refresh_ui(app_instance)
+
+        # 4. Finalize: Save to Disk ONLY ONCE at the end
+        self._finalize_message(conversation, idx, gen_id)
         self._refresh_ui(app_instance)
         self._unlock_input(app_instance)
 
-    def _get_context_from_previous_messages(self, messages: List[Union[MessageDict, UserModelPairDict]], idx: int) -> List[str]:
-        """Extract user message texts from previous messages with empty model responses."""
+    # --- HELPER METHODS ---
+
+    def _init_streaming_message(self, conversation, idx, gen_id):
+        """Creates the empty model message structure in memory."""
+        import datetime
+        messages = conversation.get('messages', [])
+        if not (0 <= idx < len(messages)): return False
+        
+        msg = messages[idx]
+        if msg.get('gen_id') != gen_id: return False
+
+        msg['model'] = {
+            'role': 'model',
+            'parts': [{'text': ""}], # Empty start
+            'timestamp': datetime.datetime.now().isoformat()
+        }
+        # Note: We keep ai_pending=True
+        return True
+
+    def _update_streaming_text(self, conversation, idx, text):
+        """Updates the text in memory without saving to disk."""
+        messages = conversation.get('messages', [])
+        if 0 <= idx < len(messages):
+            if messages[idx].get('model'):
+                messages[idx]['model']['parts'][0]['text'] = text
+
+    def _validate_ticket(self, conversation, idx, gen_id):
+        """Returns True if the ticket is still valid."""
+        messages = conversation.get('messages', [])
+        if 0 <= idx < len(messages):
+             return messages[idx].get('gen_id') == gen_id
+        return False
+
+    def _finalize_message(self, conversation, idx, gen_id):
+        """Marks as done and Saves to Disk."""
+        messages = conversation.get('messages', [])
+        if 0 <= idx < len(messages):
+            msg = messages[idx]
+            if msg.get('gen_id') == gen_id:
+                msg['ai_pending'] = False
+        
+        # SAVE TO DISK NOW (Once per response)
+        self.parent.chat_controller.write_conversation_to_history(conversation)
+
+    def _get_context_from_previous_messages(self, messages, idx: int) -> List[str]:
         context_parts = []
         for i in range(1, idx):
             pair = messages[i]
             if isinstance(pair, dict) and 'user' in pair and pair.get('model') is None:
-                user_msg: MessageDict = pair.get('user', {})
-                user_text = ''.join(part.get('text', '') for part in user_msg.get('parts', []) if isinstance(part, dict) and 'text' in part)
+                user_msg = pair.get('user', {})
+                user_text = ''.join(p.get('text', '') for p in user_msg.get('parts', []))
                 if user_text:
                     context_parts.append(user_text)
         return context_parts
-
-    def _get_response(self, prompt: str, conv_id: str) -> str:
-        if self.parent.debug_mode:
-            print("Debug mode: simulating AI response delay...")
-            time.sleep(10)
-            return Config.Prompts.DEBUG_AI_RESPONSE_TEMPLATE.format(prompt=prompt)
-        return self.parent.AI_controller.get_response(conv_id, prompt, streaming=False)
-
-    def _add_ai_message(self, response: str, conversation: ConversationDict, idx: int) -> None:
-        import datetime
-        messages: List[Union[MessageDict, UserModelPairDict]] = conversation.get('messages', [])
-        if 0 <= idx < len(messages):
-            msg = messages[idx]
-            if isinstance(msg, dict):
-                model_msg: MessageDict = {
-                    'role': 'model',
-                    'parts': [{'text': response}],
-                    'timestamp': datetime.datetime.now().isoformat()
-                }
-                msg['model'] = model_msg
-                msg['ai_pending'] = False
-        self.parent.chat_controller.write_conversation_to_history(conversation)
 
     def _refresh_ui(self, app_instance) -> None:
         app_instance.call_from_thread(app_instance.refresh_data, where='inputModel')

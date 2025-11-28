@@ -105,7 +105,9 @@ class LMStudioModel():
 
         return clean_history
 
-
+'''
+Currently does not add the model response to the 
+'''
 class LocalConversation():
     def __init__(self, system_prompt: str, client: lms.LLM):
         self.chat = Chat(system_prompt)
@@ -122,10 +124,15 @@ class LocalConversation():
             raise ValueError("Chat object is not initialized. Call create_chat first.")
         self.chat.add_user_message(prompt)
         response = self.client.respond(self.chat)
-        return LMStudioModel.extract_true_answer(response.parsed)
+        return LMStudioModel.extract_true_answer(response.content)
     
     def send_message_stream(self, prompt: str):
         self.chat.add_user_message(prompt)
+        reponse = ""
         for token in self.client.respond_stream(self.chat):
-            yield token
+            if token.content:
+                reponse += token.content
+                yield token.content
+        self.add_assistant_response(reponse)
+        
     

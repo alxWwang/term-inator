@@ -46,28 +46,52 @@ class ChatUIRenderer:
         elif 1 <= index <= pair_count:
             user_msg = messages[index].get('user', {})
             model_msg = messages[index].get('model', {})
+            ai_pending = messages[index].get('ai_pending', False)
             user_text = ''.join(part.get('text', '') for part in user_msg.get('parts', []) if isinstance(part, dict) and 'text' in part)
             model_text = None
             if isinstance(model_msg, dict) and model_msg.get('parts'):
                 model_text = ''.join(part.get('text', '') for part in model_msg.get('parts', []) if isinstance(part, dict) and 'text' in part)
             # Always show user prompt
+            thoughts , final_answer = self.parse_thinking_response(model_text) if model_text else (None, None)
             if user_text:
                 text += f"[cyan]┌─ USER {'─' * (box_width - 8)}[/cyan]\n"
                 text += self._render_markdown(user_text, box_width)
                 text += f"\n[cyan]└{'─' * (box_width - 1)}[/cyan]\n\n"
+            elif thoughts and ai_pending:
+                text += f"[right][dim]🧠 Thinking...[/dim][/right]\n\n"
             # Show loading indicator if model response missing
-            if model_text is None:
+            if model_text is None and ai_pending:
                 text += f"[bold][yellow]⏳ Waiting for assistant response...[/yellow][/bold]\n\n"
-            elif model_text:
+            if model_text is None and not ai_pending:
+                text += f"[bold][red]⚠️ No assistant response available.[/red][/bold]\n\n"
+            elif final_answer:
                 text += f"[right][magenta]{'─' * (box_width - 13)} ASSISTANT ─┐[/magenta][/right]\n"
-                text += f"[right]{self._render_markdown(model_text, box_width)}[/right]"
+                text += f"[right]{self._render_markdown(final_answer, box_width)}[/right]"
                 text += f"\n[right][magenta]{'─' * (box_width - 1)}┘[/magenta][/right]\n\n"
         current_page = index + 1
         total_pages = pair_count + 1
         text += f"\n[dim]Page {current_page}/{total_pages}[/dim]"
         chat_panel.update(text)
+        chat_scroll.scroll_end(animate=True)
 
+    def parse_thinking_response(self, raw_response: str) -> tuple[str | None, str | None]:
+        """
+        Parses the raw response.
+        Returns: (thought_process, final_answer)
+        """
+        # 1. Search for the split between thoughts and answer
+        pattern = r"<\|channel\|>final<\|message\|>"
+        match = re.search(pattern, raw_response)
         
+        if match:
+            thought_process = raw_response[:match.start()].strip()
+            final_answer = raw_response[match.end():].strip()
+            return thought_process, final_answer
+        if "<|channel|>analysis" in raw_response or "<think>" in raw_response:
+             # We are in the middle of thinking. Answer is not ready.
+             return raw_response, None 
+        return None, raw_response.strip()
+
     def view_page(self, increment_or_special: int | str, conv: ConversationDict) -> int:
         """Navigate to a different page: greeting at index 0, user/model pairs at index 1+.
         If increment_or_special == 'end', jump to last page.
@@ -171,4 +195,4 @@ class ChatUIRenderer:
     def show_loading_screen(self, chat_panel: Static, chat_scroll: VerticalScroll, message: str = "Loading conversation..."):
         loading_text = f"[bold][yellow]⏳ {message}[/yellow][/bold]\n\n[dim]Please wait while the conversation loads.[/dim]"
         chat_panel.update(loading_text)
-        chat_scroll.scroll_home(animate=False)
+        chat_scroll.scroll_end(animate=False)
