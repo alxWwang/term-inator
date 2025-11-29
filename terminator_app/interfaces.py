@@ -11,6 +11,8 @@ class MessageDict(TypedDict, total=False):
 class UserModelPairDict(TypedDict, total=False):
     user: MessageDict
     model: MessageDict
+    ai_pending: bool
+    gen_id: str
 
 class ConversationDict(TypedDict, total=False):
     id: Optional[str]

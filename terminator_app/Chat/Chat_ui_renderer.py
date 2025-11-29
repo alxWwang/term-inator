@@ -36,38 +36,67 @@ class ChatUIRenderer:
 
         # Greeting message
         if index == 0:
-            greeting = messages[0]
+            greeting = messages[index].get('model', {})
             text_parts = ''.join(part.get('text', '') for part in greeting.get('parts', []) if isinstance(part, dict) and 'text' in part)
             text += f"[right][magenta]{'─' * (box_width - 13)} ASSISTANT ─┐[/magenta][/right]\n"
             text += f"[right]{self._render_markdown(text_parts, box_width)}[/right]"
             text += f"\n[right][magenta]{'─' * (box_width - 1)}┘[/magenta][/right]\n\n"
+        
+        # ... inside display_conversation_at_index ...
         
         # User/Model pairs
         elif 1 <= index <= pair_count:
             user_msg = messages[index].get('user', {})
             model_msg = messages[index].get('model', {})
             ai_pending = messages[index].get('ai_pending', False)
-            user_text = ''.join(part.get('text', '') for part in user_msg.get('parts', []) if isinstance(part, dict) and 'text' in part)
+            
+            user_text = ''.join(part.get('text', '') for part in user_msg.get('parts', []))
+            
             model_text = None
             if isinstance(model_msg, dict) and model_msg.get('parts'):
-                model_text = ''.join(part.get('text', '') for part in model_msg.get('parts', []) if isinstance(part, dict) and 'text' in part)
-            # Always show user prompt
-            thoughts , final_answer = self.parse_thinking_response(model_text) if model_text else (None, None)
+                model_text = ''.join(part.get('text', '') for part in model_msg.get('parts', []))
+            
+            # Parse text
+            thoughts, final_answer = self.parse_thinking_response(model_text) if model_text else (None, None)
+
+            # --- RENDER USER ---
             if user_text:
                 text += f"[cyan]┌─ USER {'─' * (box_width - 8)}[/cyan]\n"
                 text += self._render_markdown(user_text, box_width)
                 text += f"\n[cyan]└{'─' * (box_width - 1)}[/cyan]\n\n"
-            elif thoughts and ai_pending:
-                text += f"[right][dim]🧠 Thinking...[/dim][/right]\n\n"
-            # Show loading indicator if model response missing
-            if model_text is None and ai_pending:
-                text += f"[bold][yellow]⏳ Waiting for assistant response...[/yellow][/bold]\n\n"
-            if model_text is None and not ai_pending:
-                text += f"[bold][red]⚠️ No assistant response available.[/red][/bold]\n\n"
-            elif final_answer:
+            
+            # --- RENDER ASSISTANT ---
+            
+            # Case 1: We have the Final Answer (Finished thinking)
+            if final_answer:
+                # Optional: You can uncomment this if you want to show collapsed thoughts above the answer
+                # text += f"[dim]💭 Thought Process: {thoughts[:50]}...[/dim]\n" 
+                
                 text += f"[right][magenta]{'─' * (box_width - 13)} ASSISTANT ─┐[/magenta][/right]\n"
                 text += f"[right]{self._render_markdown(final_answer, box_width)}[/right]"
                 text += f"\n[right][magenta]{'─' * (box_width - 1)}┘[/magenta][/right]\n\n"
+
+            # Case 2: We are actively Thinking (Streaming thoughts)
+            elif thoughts:
+                # Show the live thought stream in a dim box
+                text += f"[right][dim]┌─ 🧠 Thinking... {'─' * (box_width - 16)}┐[/dim][/right]\n"
+                # Render thoughts (limit length or box height if needed)
+                text += f"[right][dim]{self._render_markdown(thoughts, box_width)}[/dim][/right]"
+                text += f"\n[right][dim]└{'─' * (box_width - 1)}┘[/dim][/right]\n\n"
+
+            # Case 3: Waiting for first token (Connected, but empty)
+            elif ai_pending and not model_text:
+                text += f"[bold][yellow]⏳ Waiting for assistant response...[/yellow][/bold]\n\n"
+
+            # Case 4: Finished but empty/error
+            elif not ai_pending and not model_text:
+                text += f"[bold][red]⚠️ No assistant response available.[/red][/bold]\n\n"
+            
+            # Case 5: Fallback (Has text, but regex didn't match tags, likely standard model)
+            elif model_text and not final_answer:
+                 text += f"[right][magenta]{'─' * (box_width - 13)} ASSISTANT ─┐[/magenta][/right]\n"
+                 text += f"[right]{self._render_markdown(model_text, box_width)}[/right]"
+                 text += f"\n[right][magenta]{'─' * (box_width - 1)}┘[/magenta][/right]\n\n"
         current_page = index + 1
         total_pages = pair_count + 1
         text += f"\n[dim]Page {current_page}/{total_pages}[/dim]"
@@ -79,17 +108,29 @@ class ChatUIRenderer:
         Parses the raw response.
         Returns: (thought_process, final_answer)
         """
-        # 1. Search for the split between thoughts and answer
-        pattern = r"<\|channel\|>final<\|message\|>"
+        if not raw_response:
+            return None, None
+
+        # 1. Check for the END of thinking (The split point)
+        # DeepSeek/Qwen style usually ends with </think>
+        pattern = r"</think>"
         match = re.search(pattern, raw_response)
         
         if match:
-            thought_process = raw_response[:match.start()].strip()
+            # Found the split. Separate thoughts from answer.
+            # Clean up the opening <think> tag if present
+            thought_process = raw_response[:match.start()].replace("<think>", "").strip()
             final_answer = raw_response[match.end():].strip()
             return thought_process, final_answer
-        if "<|channel|>analysis" in raw_response or "<think>" in raw_response:
-             # We are in the middle of thinking. Answer is not ready.
-             return raw_response, None 
+        
+        # 2. Check if we are currently "Thinking" (Start tag exists, but no End tag)
+        if "<think>" in raw_response or "<|channel|>analysis" in raw_response:
+             # We are in the middle of thinking.
+             # Return the raw thought content so far (stripped of tag) as the first element
+             thought_content = raw_response.replace("<think>", "").strip()
+             return thought_content, None 
+
+        # 3. Standard Answer (No thinking tags detected)
         return None, raw_response.strip()
 
     def view_page(self, increment_or_special: int | str, conv: ConversationDict) -> int:

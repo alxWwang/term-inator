@@ -94,41 +94,38 @@ class Terminator(App):
         
 
     def compose(self) -> ComposeResult:
-        yield Header()
         yield Container(
             Container(
-                Button(
-                    f"New Conversation",
-                    id=Config.NEW_CONVERSATION_BUTTON_ID,
-                    classes=Config.CONVERSATION_BUTTON_CLASS
-                ),
-                VerticalScroll(
-                    id=Config.HISTORY_CONTAINER_ID
-                ),
-                id=Config.HISTORY_PANEL_CONTAINER_ID
+            Button(
+                f"New Conversation",
+                id=Config.NEW_CONVERSATION_BUTTON_ID,
+                classes=Config.CONVERSATION_BUTTON_CLASS
+            ),
+            VerticalScroll(
+                id=Config.HISTORY_CONTAINER_ID
+            ),
+            id=Config.HISTORY_PANEL_CONTAINER_ID
             ),
             Container(
-                VerticalScroll(
-                    Static(id=Config.CHAT_PANEL_ID),
-                    id=Config.CHAT_SCROLL_ID
-                ),
-                Horizontal(
-                    Button("Stop", id="input_button_stop", classes="input-action-button"),
-                    Button("Regenerate", id="input_button_regenerate", classes="input-action-button"),
-                    Button("Clear", id="input_button_clear", classes="input-action-button"),
-                    id="input_button_container",
-                    classes="input-buttons"
-                ),
-                Input(placeholder="Type your message here...", id=Config.CHAT_INPUT_ID),
+            VerticalScroll(
+                Static(id=Config.CHAT_PANEL_ID),
+                id=Config.CHAT_SCROLL_ID
+            ),
+            Horizontal(
+                Button("Stop", id="input_button_stop", classes="input-action-button"),
+                Button("Regenerate", id="input_button_regenerate", classes="input-action-button"),
+                Button("Clear", id="input_button_clear", classes="input-action-button"),
                 Button("Next", id="input_next_button", classes="input-action-button"),
                 Button("Previous", id="input_previous_button", classes="input-action-button"),
-
-                id=Config.CHAT_CONTAINER_ID
+                id="input_button_container",
+                classes="input-buttons"
+            ),
+            Input(placeholder="Type your message here...", id=Config.CHAT_INPUT_ID),
+            id=Config.CHAT_CONTAINER_ID
             ),
             id=Config.MAIN_CONTAINER_ID,
             classes="horizontal"
         )
-        yield Footer()
     
     def on_mount(self) -> None:
         """Called when app is mounted - fill panels with data"""
@@ -142,10 +139,7 @@ class Terminator(App):
         if self.chat_controller.view_page(0, self.chat_controller.current_conversation):
             self.chat_controller.display_conversation_at_index(self.chat_controller.current_conversation, chat_panel, chat_scroll)
 
-        # Set up button container reference and hide it initially
-        button_container = self.query_one("#input_button_container", Horizontal)
-        button_container.styles.display = "none"
-
+        # Set up button container reference (visible by default)
         # Populate history and focus input
         self._refresh_history_worker()
         input_field = self.query_one(f"#{Config.CHAT_INPUT_ID}", Input)

@@ -32,7 +32,7 @@ class AIController:
             model_config (dict): Configuration parameters for the model.
         """
         self.model_class = model_class or lm.LMStudioModel or gm.GoogleModel
-        self.model_config = model_config or {"model_name": "openai/gpt-oss-20b"} or {"api_key": GENAI_API_KEY}
+        self.model_config = model_config or {"model_name": "qwen/qwen3-14b"} or {"api_key": GENAI_API_KEY}
         self.model = self.model_class(**self.model_config)
         self.sessions = {}
 
