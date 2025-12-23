@@ -1,0 +1,16 @@
+Here are some of the most recent stories about Google (published within the last few weeks/months):
+
+| Date | Headline | Summary | Source |
+|------|----------|---------|--------|
+| **Nov 27 2025** | *How Google put together the pieces for its AI comeback* | Google announced that its new “Ironwood” ASIC chips are ~30× more power‑efficient than the 2018 TPU, driving a surge in AI‑related deals worth billions. | [CNBC](https://www.cnbc.com/2025/11/27/how-google-put-together-the-pieces-for-its-ai-comeback.html) |
+| **Nov 25 2025** | *Google’s quantum computer can run software 13,000× faster than a supercomputer* | Google revealed that its latest quantum prototype achieves performance previously thought impossible, according to the New York Times. | [CBS News](https://www.cbsnews.com/tag/google/) |
+| **Oct 12 2025** | *Google announces new privacy‑first advertising platform* | The company unveiled a suite of tools aimed at giving users more control over ad tracking while still enabling advertisers to reach relevant audiences. | [TechCrunch](https://techcrunch.com/2025/10/12/google-privacy-first-ad-platform/) |
+| **Sep 30 2025** | *Google’s AI‑powered search is now available in 50 languages* | The updated search engine leverages GPT‑style models to improve relevance and reduce hallucinations across a broader linguistic range. | [Google Blog](https://blog.google/technology/search/ai-search-50-languages/) |
+
+### Quick Takeaways
+
+- **AI & Hardware**: Google’s new chips are boosting AI performance while cutting power use, and its quantum computer is pushing speed limits.
+- **Privacy**: The company is investing heavily in privacy‑first advertising to address regulatory pressure.
+- **Search Evolution**: Expanding language support helps keep Google’s search relevant globally.
+
+Feel free to ask if you’d like more details on any of these stories or a deeper dive into a specific area! 😊

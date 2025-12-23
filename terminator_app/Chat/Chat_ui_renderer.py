@@ -111,24 +111,18 @@ class ChatUIRenderer:
         if not raw_response:
             return None, None
 
-        # 1. Check for the END of thinking (The split point)
-        # DeepSeek/Qwen style usually ends with </think>
-        pattern = r"</think>"
-        match = re.search(pattern, raw_response)
-        
-        if match:
-            # Found the split. Separate thoughts from answer.
-            # Clean up the opening <think> tag if present
-            thought_process = raw_response[:match.start()].replace("<think>", "").strip()
-            final_answer = raw_response[match.end():].strip()
+        # 1. Check for completed thinking blocks (<|channel|>analysis ... <|channel|>final)
+        analysis_match = re.search(r"<\|channel\|>analysis(.*?)<\|channel\|>final<\|message\|>", raw_response, flags=re.DOTALL)
+        if analysis_match:
+            thought_process = analysis_match.group(1).strip()
+            final_answer = raw_response[analysis_match.end():].strip()
             return thought_process, final_answer
-        
-        # 2. Check if we are currently "Thinking" (Start tag exists, but no End tag)
-        if "<think>" in raw_response or "<|channel|>analysis" in raw_response:
-             # We are in the middle of thinking.
-             # Return the raw thought content so far (stripped of tag) as the first element
-             thought_content = raw_response.replace("<think>", "").strip()
-             return thought_content, None 
+
+        # 2. Check if we are currently "Thinking" (analysis tag exists, but no final tag)
+        if "<|channel|>analysis" in raw_response and "<|channel|>final" not in raw_response:
+            idx = raw_response.rfind("<|channel|>analysis")
+            thought_content = raw_response[idx + len("<|channel|>analysis"):].strip()
+            return thought_content, None
 
         # 3. Standard Answer (No thinking tags detected)
         return None, raw_response.strip()

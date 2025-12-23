@@ -42,10 +42,10 @@ from textual.containers import Container, VerticalScroll, Horizontal
 from textual import work
 
 
-from .Data import load
-from .Data.DataManager import DataManager
-from .Controller import AI_Controller, Chat_controller, Input_controller, History_controller
-from .config import Config
+from terminator_app.Data import load
+from terminator_app.Data.DataManager import DataManager
+from terminator_app.Controller import AI_Controller, Chat_controller, Input_controller, History_controller
+from terminator_app.config import Config
 
 # Initialize user directories and copy default files
 Config.initialize_user_directories()

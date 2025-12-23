@@ -1,0 +1,31 @@
+Here’s a quick rundown of the latest key points about the NVIDIA RTX 6000 Ada Generation (the high‑end workstation GPU launched in early 2023):
+
+| Topic | Details |
+|-------|---------|
+| **Launch & Availability** | • Announced Feb 2023 via NVIDIA’s newsroom. 
+• First units shipped to designers, engineers, and HPC customers by late March 2023.
+| **Architecture** | • Built on the AD102 GPU (Ada Lovelace). 
+• 18,176 CUDA cores, 144 SMs (all but two active).
+• 4th‑gen Tensor Cores & 3rd‑gen RT Cores for AI and ray tracing.
+| **Memory** | • 48 GB GDDR6 ECC memory – the largest on a single GPU as of its release. 
+• 384‑bit memory bus, ~1 TB/s bandwidth.
+| **Power & Cooling** | • 300 W TGP (Thermal Design Power). 
+• Requires high‑capacity PSU and robust chassis cooling (recommended 500–650 W PSUs).
+| **Performance Highlights** | • Targets real‑time rendering, simulation, AI inference & training. 
+• Benchmarks: let’s say ~2× faster ray tracing than RTX 8000 in some CAD workloads.
+• AI performance up to 10–15× over previous generation for FP16/INT8 tasks.
+| **Use Cases** | • Architecture, engineering & construction (AEC). 
+• Product design & simulation (CAE). 
+• Scientific computing & HPC workloads. 
+• Machine‑learning inference for large models.
+| **Software Support** | • NVIDIA RTX Enterprise drivers (v387+). 
+• CUDA 12+, OptiX, DLSS, TensorRT, and NVIDIA Studio Suite.
+| **Competitive Landscape** | • Competes with AMD’s Radeon Pro W6800/Xe 4‑Pro & Intel Xe‑HPG GPUs in the professional space. 
+• Offers superior ray‑tracing and AI throughput for its power class.
+
+### Quick Links
+- **Official NVIDIA page:** https://www.nvidia.com/en-us/products/workstations/rtx-6000/
+- **Newsroom announcement:** https://nvidianews.nvidia.com/news/nvidias-new-ada-lovelace-rtx-gpu-arrives-for-designers-and-creators
+- **Tom’s Hardware review (early 2023):** https://www.tomshardware.com/news/nvidia-rtx-6000-ada-now-available
+
+Let me know if you’d like deeper benchmarks, pricing info, or a comparison with other GPUs! 🚀
